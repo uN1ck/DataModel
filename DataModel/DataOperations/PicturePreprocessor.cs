@@ -19,69 +19,74 @@ namespace DataModel.DataOperations
 
         public PicturePreprocessor()
         {
-            pic = new Bitmap(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\snils.jpg");
-            mask = Threshold(pic);
+            pic = new Bitmap(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\1-list-polozheniya-s-pechatyami.jpg");
+            mask = BinaringBitmap(pic);
             mask.Save(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\maskFile.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
         }
 
 
-
-        public Bitmap Greyzation(Bitmap pic)
-        {
-            mask = new Bitmap(pic);
-            for (int x = 0; x < pic.Width; x++)
-            {
-                for (int y = 0; y < pic.Height; y++)
-                {
-                    int color = (int)(pic.GetPixel(x, y).GetBrightness() * 255);
-                    mask.SetPixel(x, y, Color.FromArgb(255, color, color, color));
-                }
-            }
-            return mask;
-        }
-        
-
-        public Bitmap Binarize(Bitmap pic)
-        {
-            mask = new Bitmap(pic);
-            for (int x = 0; x<pic.Width; x++)
-            {
-                for (int y = 0; y< pic.Height; y++)
-                {
-                    
-                    Color pixel = mask.GetPixel(x, y);
-                    if (pixel.GetBrightness() < 0.2)
-                        mask.SetPixel(x, y, Color.Black);
-                    else
-                        mask.SetPixel(x, y, Color.White);
-                }
-            }
-            return mask;
-        }
-
-
+        /// <summary>
+        /// Бинаризация изображения мтеодом пропускания через два вида Threshold
+        /// </summary>
+        /// <param name="income">Картинка для бинаризации</param>
+        /// <returns>Бинаризованная картинка</returns>
         public Bitmap Threshold(Bitmap income)
         {
-            Image<Bgr, Byte> img = new Image<Bgr, Byte>(income);
-            Image<Bgr, Byte> res = new Image<Bgr, Byte>(income);
+            Image<Gray, Byte> img = new Image<Gray, Byte>(income);
+            Image<Gray, Byte> res = new Image<Gray, Byte>(income);
 
-            CvInvoke.Dct(img, res, Emgu.CV.CvEnum.DctType.Forward);
+            Gray lowColor = new Gray(0);
+            Gray highColor = new Gray(80);
 
-            //CvInvoke.AdaptiveThreshold(img, res, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 3, 1);
-            //CvInvoke.Threshold(img, res, 110, 255, Emgu.CV.CvEnum.ThresholdType.Binary);
-            //CvInvoke.FastNlMeansDenoising(res, img);
-            //CvInvoke.FindContours(img, res, conts, Emgu.CV.CvEnum.RetrType.Tree, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxNone);
-            //CvInvoke.Threshold(res, img, 0, 100, Emgu.CV.CvEnum.ThresholdType.BinaryInv);
-            //res.ToBitmap().Save(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\ClearedFile.bmp");
-            return res.ToBitmap();
+            try
+            {
+                CvInvoke.AdaptiveThreshold(img, res, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 51, 50);
+                CvInvoke.Threshold(res, img, 150, 255, Emgu.CV.CvEnum.ThresholdType.Otsu);
+            } catch (Emgu.CV.Util.CvException e)
+            {
+                Console.WriteLine(e);
+                Console.ReadKey();
+            }
+            
+            return img.ToBitmap();
+        }
+
+        /// <summary>
+        /// Выделение из картинки элементов серого цвета
+        /// </summary>
+        /// <param name="income"></param>
+        /// <returns></returns>
+        public Bitmap Greyzation (Bitmap income)
+        {
+            Bitmap result = new Bitmap(income);
+            for (int x = 0; x<result.Width; x++)
+            {
+                for (int y = 0; y<result.Height; y++)
+                {
+                    Color pixel = income.GetPixel(x, y);
+
+                    int colorMaxDifference = 40;
+                    double brighness = 100;
+
+
+                    if (pixel.GetBrightness() > brighness/255 || (Math.Max( Math.Abs(pixel.B-pixel.G), Math.Max(Math.Abs(pixel.R - pixel.G), Math.Abs(pixel.B - pixel.R))) > colorMaxDifference))
+                    {
+                        result.SetPixel(x, y, Color.White);
+                    } 
+                }
+            }
+            return result;
         }
 
 
-        public Bitmap Denoiseing(Bitmap income)
+        /// <summary>
+        /// Метод получения окончательного бинарного изображения
+        /// </summary>
+        /// <param name="income"></param>
+        /// <returns></returns>
+        public Bitmap BinaringBitmap(Bitmap income)
         {
-            Bitmap result = new Bitmap(income);
-
-            return result;
+           return Threshold(Greyzation(income));
         }
 
     }
