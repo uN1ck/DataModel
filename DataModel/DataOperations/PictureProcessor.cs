@@ -8,5 +8,7 @@ namespace DataModel.DataOperations
 {
     class PictureProcessor
     {
+        
+
     }
 }

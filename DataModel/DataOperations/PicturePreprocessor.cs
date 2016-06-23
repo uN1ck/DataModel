@@ -22,29 +22,34 @@ namespace DataModel.DataOperations
     class PicturePreprocessor
     {
 
+        /// <summary>
+        /// Константа маскимальной разницы в цветовом диапазоне, т.е. max( |r-g|, |r-b|, |g-b| )
+        /// </summary>
         public static int MAX_COLOR_DIFFERENCE = 55;
+        
+        /// <summary>
+        /// Константа максимлаьнйо яркости 
+        /// </summary>
         public static int MAX_BRIGHTNESS = 115;
-        public static int LINES_STANDART_COUNT = 70;
-
+        
         public PicturePreprocessor()
         {
             Bitmap pic;
-            pic = new Bitmap(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\7.jpg");
-            Bitmap buffer = FastGreyzation(pic); //BinaringBitmap(pic);
-            buffer.Save(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\0a_greyzied.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-            buffer = Threshold(buffer);
-            buffer.Save(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\0c_final.bmp", System.Drawing.Imaging.ImageFormat.Bmp);  
+            pic = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\list.jpg");
+            pic = BinaringBitmap(pic);
+            pic.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\result.jpg");
         }
 
         /// <summary>
         /// Бинаризация изображения мтеодом пропускания через два вида Threshold
         /// </summary>
-        /// <param name="income">Картинка для бинаризации</param>
-        /// <returns>Бинаризованная картинка</returns>
-        public Bitmap Threshold(Bitmap income)
+        /// <param name="income">Входная цветная картинка в формате Bgr</param>
+        /// <returns>Выходная бинаризованная картинка в формате Gray</returns>
+        public static Image<Gray, Byte> Threshold(Image<Bgr, Byte> income)
         {
-            Image<Gray, Byte> img = new Image<Gray, Byte>(income);
-            Image<Gray, Byte> res = new Image<Gray, Byte>(income);
+            Image<Gray, Byte> img = new Image<Gray, byte>(new Size(income.Width, income.Height));
+            Image<Gray, Byte> res = new Image<Gray, byte>(new Size(income.Width, income.Height));
+            CvInvoke.CvtColor(income, img, Emgu.CV.CvEnum.ColorConversion.Bgr2Gray);
 
             try
             {
@@ -56,27 +61,29 @@ namespace DataModel.DataOperations
                 Console.ReadKey();
             }
             
-            return img.ToBitmap();
+            return img;
         }
 
         /// <summary>
         /// Метод получения окончательного бинарного изображения
         /// </summary>
-        /// <param name="income"></param>
-        /// <returns></returns>
-        public Bitmap BinaringBitmap(Bitmap income)
+        /// <param name="income"> Входная картинка для бинаризации </param>
+        /// <returns> Выходная бинаризованная картинка </returns>
+        public static Bitmap BinaringBitmap(Bitmap income)
         {
-           return Threshold(FastGreyzation(income));
+            return Threshold(FastGreyzation(new Image<Bgr, Byte>(income))).ToBitmap();
         }
 
         /// <summary>
-        /// Выделение из картинки элементов серого цвета
+        /// Выделение из картинки элементов серого цвета с помощью фильтрации из исходного изображения пикселей,
+        /// удовлетворяющих условиям подходящей разности цветов (серости) и яркости. Пиксели которые не проходят
+        /// эту проверку заменяются белыми, другие остаются неизменны
         /// </summary>
-        /// <param name="income"></param>
-        /// <returns></returns>
-        public Bitmap FastGreyzation(Bitmap income)
+        /// <param name="income"> Входная цветная картинка в формате Bgr </param>
+        /// <returns> Выходная посеревшая цветная картинка в формате Bgr </returns>
+        public static Image<Bgr, Byte> FastGreyzation(Image<Bgr, Byte> income)
         {
-            Image<Bgr, Byte> img = new Image<Bgr, Byte>(income);
+            Image<Bgr, Byte> img = income.Clone();
 
             for (int x = 0; x < img.Rows; x++) 
             {
@@ -92,25 +99,8 @@ namespace DataModel.DataOperations
                 }
             }
 
-            return img.ToBitmap();
+            return img;
         }
 
-
-        public void TotalNoiseCount(Bitmap income)
-        {
-            double res = income.Size.Width * income.Size.Height;
-            double black = 0;
-
-            for (int x = 0; x<income.Width; x++)
-            {
-                for (int y = 0; y<income.Height; y++)
-                {
-                    Color pix = income.GetPixel(x, y);
-                    if (pix.R == 0 && pix.G == 0 && pix.B == 0)
-                        black++;
-                }
-            }
-            Console.WriteLine("Total: " + res + " Black: " + black + " White: " + (res - black) + " Black/Total: " + (black / res));
-        }
     }
 }
