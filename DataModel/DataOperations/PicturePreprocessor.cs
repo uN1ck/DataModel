@@ -8,22 +8,33 @@ using System.Drawing;
 using Emgu.CV;
 using Emgu.Util;
 using Emgu.CV.Structure;
+using System.Drawing.Imaging;
 
 namespace DataModel.DataOperations
 {
+    /// <summary>
+    /// Класс препроцесинга изображения, позволяющий привести изображение к бинарному т.е.
+    /// к виду, содержащему только черные и белые пиксели и удалить шумы в изображении.
+    /// Это требуется для облегчения работы методов поиска регионов интереса
+    /// 
+    /// Основной метод очистки: BinringBitmap
+    /// </summary>
     class PicturePreprocessor
     {
-        public Bitmap pic { set; get; }
-        public Bitmap mask { set;  get; }
-        
+
+        public static int MAX_COLOR_DIFFERENCE = 55;
+        public static int MAX_BRIGHTNESS = 115;
+        public static int LINES_STANDART_COUNT = 70;
 
         public PicturePreprocessor()
         {
-            pic = new Bitmap(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\1-list-polozheniya-s-pechatyami.jpg");
-            mask = BinaringBitmap(pic);
-            mask.Save(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\maskFile.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+            Bitmap pic;
+            pic = new Bitmap(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\7.jpg");
+            Bitmap buffer = FastGreyzation(pic); //BinaringBitmap(pic);
+            buffer.Save(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\0a_greyzied.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+            buffer = Threshold(buffer);
+            buffer.Save(@"C:\Users\madn1\Documents\visual studio 2015\Projects\DataModel\DataModel\Docs Examples\0c_final.bmp", System.Drawing.Imaging.ImageFormat.Bmp);  
         }
-
 
         /// <summary>
         /// Бинаризация изображения мтеодом пропускания через два вида Threshold
@@ -34,9 +45,6 @@ namespace DataModel.DataOperations
         {
             Image<Gray, Byte> img = new Image<Gray, Byte>(income);
             Image<Gray, Byte> res = new Image<Gray, Byte>(income);
-
-            Gray lowColor = new Gray(0);
-            Gray highColor = new Gray(80);
 
             try
             {
@@ -52,42 +60,57 @@ namespace DataModel.DataOperations
         }
 
         /// <summary>
-        /// Выделение из картинки элементов серого цвета
-        /// </summary>
-        /// <param name="income"></param>
-        /// <returns></returns>
-        public Bitmap Greyzation (Bitmap income)
-        {
-            Bitmap result = new Bitmap(income);
-            for (int x = 0; x<result.Width; x++)
-            {
-                for (int y = 0; y<result.Height; y++)
-                {
-                    Color pixel = income.GetPixel(x, y);
-
-                    int colorMaxDifference = 40;
-                    double brighness = 100;
-
-
-                    if (pixel.GetBrightness() > brighness/255 || (Math.Max( Math.Abs(pixel.B-pixel.G), Math.Max(Math.Abs(pixel.R - pixel.G), Math.Abs(pixel.B - pixel.R))) > colorMaxDifference))
-                    {
-                        result.SetPixel(x, y, Color.White);
-                    } 
-                }
-            }
-            return result;
-        }
-
-
-        /// <summary>
         /// Метод получения окончательного бинарного изображения
         /// </summary>
         /// <param name="income"></param>
         /// <returns></returns>
         public Bitmap BinaringBitmap(Bitmap income)
         {
-           return Threshold(Greyzation(income));
+           return Threshold(FastGreyzation(income));
         }
 
+        /// <summary>
+        /// Выделение из картинки элементов серого цвета
+        /// </summary>
+        /// <param name="income"></param>
+        /// <returns></returns>
+        public Bitmap FastGreyzation(Bitmap income)
+        {
+            Image<Bgr, Byte> img = new Image<Bgr, Byte>(income);
+
+            for (int x = 0; x < img.Rows; x++) 
+            {
+                for (int y = 0; y < img.Cols; y++)
+                {
+                    Color pixel = Color.FromArgb(img.Data[x, y, 0], img.Data[x, y, 1], img.Data[x, y, 2]);
+                    if (pixel.GetBrightness() > MAX_BRIGHTNESS / 255.0 || (Math.Max(Math.Abs(pixel.B - pixel.G), Math.Max(Math.Abs(pixel.R - pixel.G), Math.Abs(pixel.B - pixel.R))) > MAX_COLOR_DIFFERENCE))
+                    {
+                        img.Data[x, y, 0] = 255;
+                        img.Data[x, y, 1] = 255;
+                        img.Data[x, y, 2] = 255;
+                    }
+                }
+            }
+
+            return img.ToBitmap();
+        }
+
+
+        public void TotalNoiseCount(Bitmap income)
+        {
+            double res = income.Size.Width * income.Size.Height;
+            double black = 0;
+
+            for (int x = 0; x<income.Width; x++)
+            {
+                for (int y = 0; y<income.Height; y++)
+                {
+                    Color pix = income.GetPixel(x, y);
+                    if (pix.R == 0 && pix.G == 0 && pix.B == 0)
+                        black++;
+                }
+            }
+            Console.WriteLine("Total: " + res + " Black: " + black + " White: " + (res - black) + " Black/Total: " + (black / res));
+        }
     }
 }
