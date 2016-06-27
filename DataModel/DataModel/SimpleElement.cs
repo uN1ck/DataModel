@@ -11,7 +11,7 @@ namespace DataModel.DataModel
     /// контент элемента документа.
     /// Основа для построения дерева разбора документа
     /// </summary>
-    abstract class SimpleElement
+    class SimpleElement
     {
         /// <summary>
         /// Список потомков вершины дерева разбора

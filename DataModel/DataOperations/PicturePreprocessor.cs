@@ -32,10 +32,10 @@ namespace DataModel.DataOperations
         /// </summary>
         public static int MAX_BRIGHTNESS = 115;
         
-        public PicturePreprocessor()
+        public PicturePreprocessor(string name)
         {
             Bitmap pic;
-            pic = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\list.jpg");
+            pic = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\"+name+".jpg");
             pic = BinaringBitmap(pic);
             pic.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\result.jpg");
         }
