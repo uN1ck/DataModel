@@ -30,7 +30,7 @@ namespace DataModel.DataOperations
         /// <summary>
         /// Константа максимлаьнйо яркости 
         /// </summary>
-        public static int MAX_BRIGHTNESS = 115;
+        public static int MAX_BRIGHTNESS = 118;
         
         public PicturePreprocessor(string name)
         {
@@ -72,6 +72,7 @@ namespace DataModel.DataOperations
         public static Bitmap BinaringBitmap(Bitmap income)
         {
             return Threshold(FastGreyzation(new Image<Bgr, Byte>(income))).ToBitmap();
+            //return Threshold(FastGreyzation(MedianBluringDenoiesing( new Image<Bgr, Byte>(income)))).ToBitmap();
         }
 
         /// <summary>
@@ -98,6 +99,30 @@ namespace DataModel.DataOperations
                     }
                 }
             }
+
+            return img;
+        }
+
+        public static Image<Bgr, Byte> MedianBluringDenoiesing(Image<Bgr, Byte> income)
+        {
+            Image<Bgr, Byte> img = new Image<Bgr, byte>(income.Size);
+            Image<Bgr, Byte> blured = new Image<Bgr, byte>(income.Size);
+            try
+            {
+                CvInvoke.MedianBlur(income, blured, 71);
+                blured = blured.Not();
+                blured.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\blured0.jpg");
+                
+                CvInvoke.Add(income, blured, img);
+                img.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\blured1.jpg");
+                //img = img.Not();
+                
+            }   catch (Emgu.CV.Util.CvException ex)
+            {
+                Console.WriteLine(ex);
+                Console.ReadKey();
+            }
+            img.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\blured2.jpg");
 
             return img;
         }

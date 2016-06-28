@@ -16,7 +16,7 @@ namespace DataModel.DataModel
         /// <summary>
         /// Список потомков вершины дерева разбора
         /// </summary>
-        public List<SimpleElement> Children { set; get; }
+        public List<int> Children { set; get; }
 
         /// <summary>
         /// Коробка-граница региона интереса, являющегося вершиной дерева разбора
@@ -29,21 +29,30 @@ namespace DataModel.DataModel
         public String Name { set; get; }
 
         /// <summary>
-        /// Идентификатор контента.
-        /// Используется для идентификации контента, содержащегося в вершине дерева разбора
+        /// Ссылка на предка в дереве резбора
         /// </summary>
-        private String id;
-        public String ID { get { return id; } }
+        public int Parent { set; get; }
 
-        /// <summary>
-        /// Конструктор вершины дерева разбора
-        /// </summary>
-        /// <param name="ID">Уникальный идентификатор контента</param>
-        public SimpleElement(String ID)
+     
+        public SimpleElement(Rectangle rect, String name)
         {
-            Children = new List<SimpleElement>();
+            Children = new List<int>();
+            Name = name;
+            Rect = rect;
+        }
+
+        public SimpleElement(Rectangle rect)
+        {
+            Children = new List<int>();
             Name = "New simple element";
-            id = ID;
+            Rect = rect;
+        }
+
+        public SimpleElement()
+        {
+            Children = new List<int>();
+            Name = "New simple element";
+            Rect = new Rectangle();
         }
 
     }
