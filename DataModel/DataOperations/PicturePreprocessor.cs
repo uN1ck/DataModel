@@ -103,6 +103,12 @@ namespace DataModel.DataOperations
             return img;
         }
 
+
+        /// <summary>
+        /// Метод блюринга изображения, возвращает изображение, с вычетом фона-размытия изображения
+        /// </summary>
+        /// <param name="income">Входная цветная картинка в формате Bgr</param>
+        /// <returns> Выходная обесфоненая картинка</returns>
         public static Image<Bgr, Byte> MedianBluringDenoiesing(Image<Bgr, Byte> income)
         {
             Image<Bgr, Byte> img = new Image<Bgr, byte>(income.Size);

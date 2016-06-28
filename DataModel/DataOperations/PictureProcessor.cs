@@ -17,12 +17,11 @@ namespace DataModel.DataOperations
     class PictureProcessor
     {
         private Image<Gray, byte> raw;
-        public Bitmap RAW { set { raw = new Image<Gray, byte>(value); } get { return raw.ToBitmap(); } }
-        private Random randomID;
+        public Bitmap RAW { set { raw = new Image<Gray, byte>(value); } get { return raw.ToBitmap(); } }       
         
 
         /// <summary>
-        /// Порог случайного шума в строке
+        /// Порог случайного шума между строками
         /// Следует вычислять по ходу дела, но пока не проработан алгоритм
         /// </summary>
         public static int MAXIMUM_POSSIBLE_NOISE = 2;
@@ -125,8 +124,6 @@ namespace DataModel.DataOperations
             return partition;
         }
         
-
-
         /// <summary>
         /// Метод построения последовательного разбиения картинки на регионы
         /// Наивная реализация
@@ -164,7 +161,6 @@ namespace DataModel.DataOperations
             rest.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\separation.jpg");
         }
 
-
         /// <summary>
         /// Метод сбора картинки, показывающей частоту встречаемости черного пикселя в строке и в столбце
         /// используется для сбора данных, в итоговой программе не нужен, либо будет переписан
@@ -199,7 +195,7 @@ namespace DataModel.DataOperations
 
         }
 
-
+        //Дебажный метод
         public void buildRegionMask()
         {
             Byte[,,] mapped = raw.Data;

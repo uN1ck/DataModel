@@ -21,7 +21,7 @@ namespace DataModel
         {
             Stopwatch t = Stopwatch.StartNew();
 
-            Bitmap picture = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\snils.jpg");
+            Bitmap picture = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\INN.jpg");
             picture = PicturePreprocessor.BinaringBitmap(picture);
             PictureProcessor pProc = new PictureProcessor();
             picture.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\0p_Preprocessed.jpg");
