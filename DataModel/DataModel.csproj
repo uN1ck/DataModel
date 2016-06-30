@@ -142,7 +142,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataModel\SimpleElement.cs" />
+    <Compile Include="DataModel\TemplateElement.cs" />
     <Compile Include="DataOperations\PicturePreprocessor.cs" />
     <Compile Include="DataOperations\PictureProcessor.cs" />
     <Compile Include="Program.cs" />

@@ -10,7 +10,7 @@ using Emgu.Util;
 using Emgu.CV.Structure;
 using System.Drawing.Imaging;
 
-namespace DataModel.DataOperations
+namespace Enterra.DocumentLayoutAnalysis.Model
 {
     /// <summary>
     /// Класс препроцесинга изображения, позволяющий привести изображение к бинарному т.е.
@@ -19,59 +19,51 @@ namespace DataModel.DataOperations
     /// 
     /// Основной метод очистки: BinringBitmap
     /// </summary>
-    class PicturePreprocessor
+    public class PicturePreprocessor
     {
 
         /// <summary>
         /// Константа маскимальной разницы в цветовом диапазоне, т.е. max( |r-g|, |r-b|, |g-b| )
         /// </summary>
-        public static int MAX_COLOR_DIFFERENCE = 55;
-        
+        public const int MaxColorDifference = 55;
+
         /// <summary>
         /// Константа максимлаьнйо яркости 
         /// </summary>
-        public static int MAX_BRIGHTNESS = 118;
+        public const int MaxBrightness = 118;
         
-        public PicturePreprocessor(string name)
-        {
-            Bitmap pic;
-            pic = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\"+name+".jpg");
-            pic = BinaringBitmap(pic);
-            pic.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\result.jpg");
-        }
-
         /// <summary>
         /// Бинаризация изображения мтеодом пропускания через два вида Threshold
         /// </summary>
-        /// <param name="income">Входная цветная картинка в формате Bgr</param>
+        /// <param name="inputImage">Входная цветная картинка в формате Bgr</param>
         /// <returns>Выходная бинаризованная картинка в формате Gray</returns>
-        public static Image<Gray, Byte> Threshold(Image<Bgr, Byte> income)
+        public static Image<Gray, Byte> ThresholdingImage(Image<Bgr, Byte> inputImage)
         {
-            Image<Gray, Byte> img = new Image<Gray, byte>(new Size(income.Width, income.Height));
-            Image<Gray, Byte> res = new Image<Gray, byte>(new Size(income.Width, income.Height));
-            CvInvoke.CvtColor(income, img, Emgu.CV.CvEnum.ColorConversion.Bgr2Gray);
+            Image<Gray, Byte> originalImage = new Image<Gray, byte>(new Size(inputImage.Width, inputImage.Height));
+            Image<Gray, Byte> processedImage = new Image<Gray, byte>(new Size(inputImage.Width, inputImage.Height));
+            CvInvoke.CvtColor(inputImage, originalImage, Emgu.CV.CvEnum.ColorConversion.Bgr2Gray);
 
             try
             {
-                CvInvoke.AdaptiveThreshold(img, res, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 51, 50);
-                CvInvoke.Threshold(res, img, 150, 255, Emgu.CV.CvEnum.ThresholdType.Otsu);
+                CvInvoke.AdaptiveThreshold(originalImage, processedImage, 255, Emgu.CV.CvEnum.AdaptiveThresholdType.GaussianC, Emgu.CV.CvEnum.ThresholdType.Binary, 51, 50);
+                CvInvoke.Threshold(processedImage, processedImage, 150, 255, Emgu.CV.CvEnum.ThresholdType.Otsu);
             } catch (Emgu.CV.Util.CvException e)
             {
                 Console.WriteLine(e);
                 Console.ReadKey();
             }
             
-            return img;
+            return processedImage;
         }
 
         /// <summary>
         /// Метод получения окончательного бинарного изображения
         /// </summary>
-        /// <param name="income"> Входная картинка для бинаризации </param>
+        /// <param name="inputImage"> Входная картинка для бинаризации </param>
         /// <returns> Выходная бинаризованная картинка </returns>
-        public static Bitmap BinaringBitmap(Bitmap income)
+        public static Bitmap BinarizeImage(Bitmap inputImage)
         {
-            return Threshold(FastGreyzation(new Image<Bgr, Byte>(income))).ToBitmap();
+            return ThresholdingImage(ConvertToGrayscale(new Image<Bgr, Byte>(inputImage))).ToBitmap();
             //return Threshold(FastGreyzation(MedianBluringDenoiesing( new Image<Bgr, Byte>(income)))).ToBitmap();
         }
 
@@ -80,18 +72,18 @@ namespace DataModel.DataOperations
         /// удовлетворяющих условиям подходящей разности цветов (серости) и яркости. Пиксели которые не проходят
         /// эту проверку заменяются белыми, другие остаются неизменны
         /// </summary>
-        /// <param name="income"> Входная цветная картинка в формате Bgr </param>
+        /// <param name="inputImage"> Входная цветная картинка в формате Bgr </param>
         /// <returns> Выходная посеревшая цветная картинка в формате Bgr </returns>
-        public static Image<Bgr, Byte> FastGreyzation(Image<Bgr, Byte> income)
+        public static Image<Bgr, Byte> ConvertToGrayscale(Image<Bgr, Byte> inputImage)
         {
-            Image<Bgr, Byte> img = income.Clone();
+            Image<Bgr, Byte> img = inputImage.Clone();
 
             for (int x = 0; x < img.Rows; x++) 
             {
                 for (int y = 0; y < img.Cols; y++)
                 {
                     Color pixel = Color.FromArgb(img.Data[x, y, 0], img.Data[x, y, 1], img.Data[x, y, 2]);
-                    if (pixel.GetBrightness() > MAX_BRIGHTNESS / 255.0 || (Math.Max(Math.Abs(pixel.B - pixel.G), Math.Max(Math.Abs(pixel.R - pixel.G), Math.Abs(pixel.B - pixel.R))) > MAX_COLOR_DIFFERENCE))
+                    if (pixel.GetBrightness() > MaxBrightness / 255.0 || (Math.Max(Math.Abs(pixel.B - pixel.G), Math.Max(Math.Abs(pixel.R - pixel.G), Math.Abs(pixel.B - pixel.R))) > MaxColorDifference))
                     {
                         img.Data[x, y, 0] = 255;
                         img.Data[x, y, 1] = 255;
@@ -103,23 +95,24 @@ namespace DataModel.DataOperations
             return img;
         }
 
-
         /// <summary>
         /// Метод блюринга изображения, возвращает изображение, с вычетом фона-размытия изображения
         /// </summary>
         /// <param name="income">Входная цветная картинка в формате Bgr</param>
         /// <returns> Выходная обесфоненая картинка</returns>
-        public static Image<Bgr, Byte> MedianBluringDenoiesing(Image<Bgr, Byte> income)
+        public static Image<Bgr, Byte> ApplyMedianBlurs(Image<Bgr, Byte> inputImage)
         {
-            Image<Bgr, Byte> img = new Image<Bgr, byte>(income.Size);
-            Image<Bgr, Byte> blured = new Image<Bgr, byte>(income.Size);
+            Image<Bgr, Byte> img = new Image<Bgr, byte>(inputImage.Size);
+            Image<Bgr, Byte> blured = new Image<Bgr, byte>(inputImage.Size);
             try
             {
-                CvInvoke.MedianBlur(income, blured, 71);
+                
+                CvInvoke.GaussianBlur(inputImage, blured, new Size(21, 21), 16);
+                //CvInvoke.MedianBlur(income, blured, 71);
                 blured = blured.Not();
                 blured.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\blured0.jpg");
                 
-                CvInvoke.Add(income, blured, img);
+                CvInvoke.Add(inputImage, blured, img);
                 img.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\blured1.jpg");
                 //img = img.Not();
                 
