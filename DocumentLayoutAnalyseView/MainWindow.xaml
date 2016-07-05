@@ -1,0 +1,30 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DocumentLayoutAnalyseView"
+        xmlns:CustomControllers="clr-namespace:DocumentLayoutAnalyseView.CustomControllers" x:Class="DocumentLayoutAnalyseView.MainWindow"
+        mc:Ignorable="d"
+        Title="Document layout analyse" Height="700" Width="1000">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" MinHeight="100" MinWidth="100" BorderBrush="Black" BorderThickness="2" Margin="5">
+            <Image x:Name="Image_PrevievDocument" Stretch="Uniform"/>
+        </Border>
+
+        <StackPanel Grid.Column="1" >
+            <Button x:Name="Button_OpenOriginalImage" Content="Открыть изображение" Margin="5" Click="Button_OpenOriginalImage_Click" />
+            <Button x:Name="Button_ApplyFilter" Content="Применить фильтр" Margin="5" Click="Button_ApplyFilter_Click"/>
+            <Button x:Name="Button_DetectRegions" Content="Выбрать регионы" Margin="5" Click="Button_DetectRegions_Click" />
+
+            <CustomControllers:DilatedImageFilterController x:Name="PreprocessingController"/>
+            <CustomControllers:CannyContourProcessingController x:Name="ProcessingController"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

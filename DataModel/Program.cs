@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Emgu.CV;
-using Emgu.Util;
-using Emgu.CV.Structure;
-using System.Drawing.Imaging;
 using System.Drawing;
 
 using System.Diagnostics;
 
 using Enterra.DocumentLayoutAnalysis.Model;
-using Enterra.DocumentLayoutAnalysis.Search;
 
 namespace DataModel
 {
@@ -23,14 +14,14 @@ namespace DataModel
         {
             Stopwatch t = Stopwatch.StartNew();
 
-            Bitmap picture = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\INN.jpg");
-            picture = PicturePreprocessor.BinaringBitmap(picture);
-            PictureProcessor pictureProcessor = new PictureProcessor();
-            picture.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\0p_Preprocessed.jpg");
+            Bitmap picture = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\snils.jpg");
+            IImageBinarizationFilter binarizationFilter = new DilatedImageFilter();
+            picture = binarizationFilter.BinarizeImage(picture);
 
-            pictureProcessor.RAW = picture;
-            pictureProcessor.buildRegionMask();
-            pictureProcessor.buildPartition();
+            picture.Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\Crops\preprocessed.jpg");
+            ImageProcessor imageProcessor = new CannyContourImageProcessor(400);
+            imageProcessor.buildPartition(picture);
+            imageProcessor.DrawMask().Save(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\Crops\processed.jpg");
 
             t.Stop();
             Console.WriteLine(t.Elapsed);

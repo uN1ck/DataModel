@@ -21,7 +21,7 @@ namespace Enterra.DocumentLayoutAnalysis.Model
         /// <summary>
         /// Коробка-граница региона интереса, являющегося вершиной дерева разбора
         /// </summary>
-        public Rectangle Rect{ set; get; }
+        public Rectangle Rectangle{ set; get; }
 
         /// <summary>
         /// Заголовок вершины дерева разбора
@@ -38,21 +38,21 @@ namespace Enterra.DocumentLayoutAnalysis.Model
         {
             TemplateContainer = new List<TemplateElement>();
             Name = name;
-            Rect = rect;
+            Rectangle = rect;
         }
 
         public TemplateElement(Rectangle rect)
         {
             TemplateContainer = new List<TemplateElement>();
             Name = "New simple element";
-            Rect = rect;
+            Rectangle = rect;
         }
 
         public TemplateElement()
         {
             TemplateContainer = new List<TemplateElement>();
             Name = "New simple element";
-            Rect = new Rectangle();
+            Rectangle = new Rectangle();
         }
 
     }
