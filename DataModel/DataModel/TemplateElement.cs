@@ -18,10 +18,11 @@ namespace Enterra.DocumentLayoutAnalysis.Model
         /// </summary>
         public List<TemplateElement> TemplateContainer { set; get; }
 
+        private Rectangle rectangle;
         /// <summary>
         /// Коробка-граница региона интереса, являющегося вершиной дерева разбора
         /// </summary>
-        public Rectangle Rectangle{ set; get; }
+        public Rectangle Rectangle{ set { rectangle = value; } get { return rectangle; } }
 
         /// <summary>
         /// Заголовок вершины дерева разбора

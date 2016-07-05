@@ -36,7 +36,6 @@ namespace DocumentLayoutAnalyseView
         private void Button_ApplyFilter_Click(object sender, RoutedEventArgs e)
         {
             processed = PreprocessingController.ImageBinarizationFilter.BinarizeImage(original);
-            //processed.Save("processed.jpg");
             Image_PrevievDocument.Source = Convert(processed);
         }
 
@@ -51,10 +50,14 @@ namespace DocumentLayoutAnalyseView
             if (ofd.FileName != "" || ofd.FileName != null)
             {
                 original = new Bitmap(ofd.FileName);
-                original.Save("original.jpg");
                 Image_PrevievDocument.Source = Convert(original);
             }
-
+            else
+            {
+                original = new Bitmap(1, 1);
+                processed = new Bitmap(1, 1);
+                Image_PrevievDocument.Source = Convert(original);
+            }
         }
 
         private void Button_DetectRegions_Click(object sender, RoutedEventArgs e)
@@ -74,8 +77,6 @@ namespace DocumentLayoutAnalyseView
             ObjBitmapImage.StreamSource = Ms;
             ObjBitmapImage.EndInit();
             return ObjBitmapImage;
-        }
-
-       
+        }      
     }
 }

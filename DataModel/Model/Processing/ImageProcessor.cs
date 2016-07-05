@@ -53,5 +53,6 @@ namespace Enterra.DocumentLayoutAnalysis.Model
             return img.Clone(cropArea, img.PixelFormat);
         }
 
+
     }
 }

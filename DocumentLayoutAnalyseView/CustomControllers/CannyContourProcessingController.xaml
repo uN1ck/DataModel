@@ -10,8 +10,7 @@
     <Grid Margin="0,0,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="80"></RowDefinition>
-            <RowDefinition IsEnabled="{Binding ElementName=СheckBox_IsCannyActive, Path=IsChecked, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <RowDefinition Height="80" IsEnabled="{Binding ElementName=СheckBox_IsCannyActive, Path=Value, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"></RowDefinition>
+            <RowDefinition/>
             <RowDefinition Height="80"></RowDefinition>
             <RowDefinition Height="35"></RowDefinition>
         </Grid.RowDefinitions>
@@ -24,28 +23,21 @@
         <TextBox Grid.Row="0" x:Name="TextBox_SizeOfMinimumRegion" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
                  Text="{Binding ElementName=Slider_SizeOfMinimumRegion, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Slider Grid.Row="1" x:Name="Slider_CannyThreshold" HorizontalAlignment="Left" 
-                Margin="10,53,0,0" VerticalAlignment="Top" Width="280" Height="18" 
-                Minimum="0" Maximum="254" Value="{Binding Path=CannyThreshold, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <Label Grid.Row="1" x:Name="Label_CannyThreshold" Content="Порог поиска 'сильных' краев" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193"/>
-        <TextBox Grid.Row="1" x:Name="TextBox_CannyThreshold" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
-                 Text="{Binding ElementName=Slider_CannyThreshold, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-        <Slider Grid.Row="2" x:Name="Slider_CannyThresLinking" HorizontalAlignment="Left" 
+        <Slider Grid.Row="1" x:Name="Slider_RectangleCrossPercent" HorizontalAlignment="Left" 
                 Margin="10,52,0,0" VerticalAlignment="Top" Width="280" Height="18" 
-                Minimum="0" Maximum="255" Value="{Binding Path=CannyThresLinking, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <Label Grid.Row="2" x:Name="Label_CannyThresLinking" Content="Порог соединения ребер" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193" />
-        <TextBox Grid.Row="2" x:Name="TextBox_CannyThresLinking" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
-                 Text="{Binding ElementName=Slider_CannyThresLinking, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                Minimum="0" Maximum="100" Value="{Binding Path=RectangleCrossPercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Label Grid.Row="1" x:Name="Label_RectangleCrossPercentg" Content="Процент пересечения регионов" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193" />
+        <TextBox Grid.Row="1" x:Name="TextBox_RectangleCrossPercent" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
+                 Text="{Binding ElementName=Slider_RectangleCrossPercent, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Slider Grid.Row="3" x:Name="Slider_LineWidth" HorizontalAlignment="Left" 
+        <Slider Grid.Row="2" x:Name="Slider_LineWidth" HorizontalAlignment="Left" 
                 Margin="10,52,0,0" VerticalAlignment="Top" Width="280" Height="18" 
                 Minimum="0" Maximum="255" Value="{Binding Path=LineWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <Label Grid.Row="3" x:Name="Label_LineWidth" Content="Ширина ребра региона" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193" />
-        <TextBox Grid.Row="3" x:Name="TextBox_LineWidth" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
+        <Label Grid.Row="2" x:Name="Label_LineWidth" Content="Ширина ребра региона" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193" />
+        <TextBox Grid.Row="2" x:Name="TextBox_LineWidth" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
                  Text="{Binding ElementName=Slider_LineWidth, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <CheckBox Grid.Row="4" x:Name="СheckBox_IsCannyActive" Content="Активировать поиск граней Кэнни" 
+        <CheckBox Grid.Row="3" x:Name="СheckBox_IsCannyActive" Content="Активировать поиск граней Кэнни" 
                   HorizontalAlignment="Left" Margin="10,10,0,0"  VerticalAlignment="Top"
                   IsChecked="{Binding Path=IsCannyActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                   />

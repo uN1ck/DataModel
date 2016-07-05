@@ -43,6 +43,12 @@ namespace DocumentLayoutAnalyseView.CustomControllers
             get { return cannyContourImageProcessor.CannyThresLinking; }
         }
 
+        public double RectangleCrossPercent
+        {
+            set { cannyContourImageProcessor.RectangleCrossPercent = value; }
+            get { return cannyContourImageProcessor.RectangleCrossPercent; }
+        }
+
         public int LineWidth
         {
             set { cannyContourImageProcessor.LineWidth = value; }

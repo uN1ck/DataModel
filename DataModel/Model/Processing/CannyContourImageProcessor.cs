@@ -35,13 +35,18 @@ namespace Enterra.DocumentLayoutAnalysis.Model
         public bool IsCannyActive { set { isCannyActive = value; } get { return isCannyActive; } }
 
         /// <summary>
+        /// Процент покрытия прямоугольника прямоугольником, определяющий считать ли их пересекающимися
+        /// </summary>
+        public double RectangleCrossPercent { set; get; }
+
+        /// <summary>
         /// Конструктор
         /// </summary>
         /// <param name="inputImage">Входное изображение</param>
         /// <param name="sizeOfMinimumRegion">Площадь минимального регона</param>
-        public CannyContourImageProcessor(int sizeOfMinimumRegion = 216, double cannyThreshold = 80.0, double cannyThresLinking = 120.0, bool isCannyActive = true)
+        public CannyContourImageProcessor(int sizeOfMinimumRegion = 600, double cannyThreshold = 80.0, double cannyThresLinking = 120.0, double rectangleCrossPercent = 5, bool isCannyActive = true)
         {
-
+            RectangleCrossPercent = rectangleCrossPercent;
             SizeOfMinimumRegion = sizeOfMinimumRegion;
             CannyThreshold = cannyThreshold;
             CannyThresLinking = cannyThresLinking;
@@ -88,24 +93,53 @@ namespace Enterra.DocumentLayoutAnalysis.Model
             return partition;
         }
 
-        private bool rectangleContains(Rectangle l, Rectangle r)
+        /// <summary>
+        /// Метод пересечения прямоугольников с учетом их покрытия друг другом
+        /// </summary>
+        /// <param name="l">Прямоугольник относитеьно котрого вычисляется процент покрытия</param>
+        /// <param name="r">Прямоугольник</param>
+        /// <returns>Истину, если прямоугольник l покрыл прямоугольник r на <see cref="RectangleCrossPercent" от меньшего/> процентов</returns>
+        private bool rectangleCross(Rectangle l, Rectangle r)
         {
-            return (l.X <= r.X && l.Y <= r.Y && l.Right >= r.Right && l.Bottom >= r.Bottom);
+            double size = Math.Min(r.Width * r.Height, l.Width * l.Height) / 100 * RectangleCrossPercent;
+
+            Rectangle intersection = new Rectangle(l.Location, l.Size);
+            intersection.Intersect(r);
+            return intersection.Width * intersection.Height < size;
         }
 
+        /// <summary>
+        /// Метод слияния пересекающихся прямоугольников
+        /// </summary>
         private void mergeCrossingRectangles()
         {
+            bool isAdding = false;
+
             partition.Sort((TemplateElement l, TemplateElement r) =>
             {
                 return ((l.Rectangle.Width * l.Rectangle.Height > r.Rectangle.Width * r.Rectangle.Height) ? 1 : -1);
             });
+
             for (int i = 0; i < partition.Count; i++)
             {
-                bool detected = true;
                 for (int k = i+1; k < partition.Count; k++)
-                    if ((i != k) && (rectangleContains(partition[k].Rectangle, partition[i].Rectangle)))
+                    if ((i != k) && (!rectangleCross(partition[k].Rectangle, partition[i].Rectangle)))
                     {
-                        partition.RemoveAt(i);
+                        if (isAdding)
+                        {
+                            Point leftUpCorner = new Point(Math.Min(partition[i].Rectangle.X, partition[k].Rectangle.X), Math.Min(partition[i].Rectangle.Y, partition[k].Rectangle.Y));
+                            Point rightBottomCorner = new Point(Math.Min(partition[i].Rectangle.Right, partition[k].Rectangle.Right) - leftUpCorner.X, Math.Min(partition[i].Rectangle.Bottom, partition[k].Rectangle.Bottom) - leftUpCorner.Y);
+
+                            partition.Add(new TemplateElement(new Rectangle(leftUpCorner.X, leftUpCorner.Y, rightBottomCorner.X, rightBottomCorner.Y), "UN_" + i));
+
+                            partition.RemoveAt(i);
+                            partition.RemoveAt(k);
+                        }
+                        else
+                        {
+                            partition.RemoveAt(i);
+                        }
+
                         i--;
                         break;
                     }

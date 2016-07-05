@@ -6,25 +6,44 @@
         xmlns:local="clr-namespace:DocumentLayoutAnalyseView"
         xmlns:CustomControllers="clr-namespace:DocumentLayoutAnalyseView.CustomControllers" x:Class="DocumentLayoutAnalyseView.MainWindow"
         mc:Ignorable="d"
-        Title="Document layout analyse" Height="700" Width="1000">
+        Title="Document layout analyse" Height="710" Width="1000">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
         <Border Grid.Column="0" MinHeight="100" MinWidth="100" BorderBrush="Black" BorderThickness="2" Margin="5">
             <Image x:Name="Image_PrevievDocument" Stretch="Uniform"/>
         </Border>
+        <TabControl Grid.Column="1">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Margin="3">Процессинг</TextBlock>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <StackPanel  >
+                        <Button x:Name="Button_OpenOriginalImage" Content="Открыть изображение" Margin="5" Click="Button_OpenOriginalImage_Click" />
+                        <Button x:Name="Button_ApplyFilter" Content="Применить фильтр" Margin="5" Click="Button_ApplyFilter_Click"/>
+                        <Button x:Name="Button_DetectRegions" Content="Выбрать регионы" Margin="5" Click="Button_DetectRegions_Click" />
 
-        <StackPanel Grid.Column="1" >
-            <Button x:Name="Button_OpenOriginalImage" Content="Открыть изображение" Margin="5" Click="Button_OpenOriginalImage_Click" />
-            <Button x:Name="Button_ApplyFilter" Content="Применить фильтр" Margin="5" Click="Button_ApplyFilter_Click"/>
-            <Button x:Name="Button_DetectRegions" Content="Выбрать регионы" Margin="5" Click="Button_DetectRegions_Click" />
-
-            <CustomControllers:DilatedImageFilterController x:Name="PreprocessingController"/>
-            <CustomControllers:CannyContourProcessingController x:Name="ProcessingController"/>
-        </StackPanel>
+                        <CustomControllers:DilatedImageFilterController x:Name="PreprocessingController"/>
+                        <CustomControllers:CannyContourProcessingController x:Name="ProcessingController"/>
+                    </StackPanel>
+                </TabItem.Content>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Margin="3">Редактирование регионов</TextBlock>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <StackPanel>
+                        
+                    </StackPanel>
+                </TabItem.Content>
+            </TabItem>
+            
+        </TabControl>
 
     </Grid>
 </Window>
