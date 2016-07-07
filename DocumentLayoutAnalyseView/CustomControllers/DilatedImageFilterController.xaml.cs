@@ -24,6 +24,7 @@ namespace DocumentLayoutAnalyseView.CustomControllers
     public partial class DilatedImageFilterController : UserControl
     {
         private DilatedImageFilter dilatedImageFilter;
+        public DilatedImageFilter DilatedImageFilter { set { dilatedImageFilter = value; } }
 
         public IImageBinarizationFilter ImageBinarizationFilter { get { return dilatedImageFilter; } }
 

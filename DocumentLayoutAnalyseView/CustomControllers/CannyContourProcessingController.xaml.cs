@@ -10,6 +10,8 @@ namespace DocumentLayoutAnalyseView.CustomControllers
     {
 
         private CannyContourImageProcessor cannyContourImageProcessor;
+        public CannyContourImageProcessor CannyContourImageProcessor { set { cannyContourImageProcessor = value; } }
+
         public ImageProcessor ImageProcessor { get { return cannyContourImageProcessor; } }
 
         public CannyContourProcessingController()

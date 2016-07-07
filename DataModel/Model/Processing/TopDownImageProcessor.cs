@@ -50,20 +50,20 @@ namespace Enterra.DocumentLayoutAnalysis.Model
             for (int partitionIndex = begin; partitionIndex < size; partitionIndex++)
             {
                 Byte[,,] mapped = raw.Data;
-                int[] separation = new int[partition[partitionIndex].Rectangle.Height];
+                int[] separation = new int[partition[partitionIndex].Rect.Height];
 
-                for (int x = partition[partitionIndex].Rectangle.X; x < partition[partitionIndex].Rectangle.X + partition[partitionIndex].Rectangle.Width; x++)
-                    for (int y = partition[partitionIndex].Rectangle.Y; y < partition[partitionIndex].Rectangle.Y + partition[partitionIndex].Rectangle.Height; y++)
+                for (int x = partition[partitionIndex].Rect.X; x < partition[partitionIndex].Rect.X + partition[partitionIndex].Rect.Width; x++)
+                    for (int y = partition[partitionIndex].Rect.Y; y < partition[partitionIndex].Rect.Y + partition[partitionIndex].Rect.Height; y++)
                         if (mapped[y, x, 0] == 0)
-                            separation[y - partition[partitionIndex].Rectangle.Y]++;
+                            separation[y - partition[partitionIndex].Rect.Y]++;
 
                 List<KeyValuePair<int, int>> whitePartition = new List<KeyValuePair<int, int>>();
-                for (int i = partition[partitionIndex].Rectangle.Y; i < partition[partitionIndex].Rectangle.Y + partition[partitionIndex].Rectangle.Height; i++)
+                for (int i = partition[partitionIndex].Rect.Y; i < partition[partitionIndex].Rect.Y + partition[partitionIndex].Rect.Height; i++)
                 {
                     int len = 0;
                     int start = 0;
-                    for (start = i; (i + 1 < partition[partitionIndex].Rectangle.Y + partition[partitionIndex].Rectangle.Height) && (Math.Abs(separation[i - partition[partitionIndex].Rectangle.Y] - separation[i + 1 - partition[partitionIndex].Rectangle.Y]) < maximum_possible_noise); i++, len++) ;
-                    if ((len > (partition[partitionIndex].Rectangle.Width / text_size_raito)) || (i == partition[partitionIndex].Rectangle.Y + partition[partitionIndex].Rectangle.Height - 1))
+                    for (start = i; (i + 1 < partition[partitionIndex].Rect.Y + partition[partitionIndex].Rect.Height) && (Math.Abs(separation[i - partition[partitionIndex].Rect.Y] - separation[i + 1 - partition[partitionIndex].Rect.Y]) < maximum_possible_noise); i++, len++) ;
+                    if ((len > (partition[partitionIndex].Rect.Width / text_size_raito)) || (i == partition[partitionIndex].Rect.Y + partition[partitionIndex].Rect.Height - 1))
                         whitePartition.Add(new KeyValuePair<int, int>(start, start + len));
 
                 }
@@ -71,7 +71,7 @@ namespace Enterra.DocumentLayoutAnalysis.Model
                 if (whitePartition.Count > 0)
                     for (int i = 1; i < whitePartition.Count; i++)
                     {
-                        TemplateElement currentElement = new TemplateElement(new Rectangle(partition[partitionIndex].Rectangle.X, whitePartition[i - 1].Value, partition[partitionIndex].Rectangle.Width, whitePartition[i].Key - whitePartition[i - 1].Value), "HE");
+                        TemplateElement currentElement = new TemplateElement(new Rectangle(partition[partitionIndex].Rect.X, whitePartition[i - 1].Value, partition[partitionIndex].Rect.Width, whitePartition[i].Key - whitePartition[i - 1].Value), "HE");
                         partition[partitionIndex].TemplateContainer.Add(currentElement);
                         partition.Add(currentElement);
                     }
@@ -93,27 +93,27 @@ namespace Enterra.DocumentLayoutAnalysis.Model
             for (int partitionIndex = begin; partitionIndex < size; partitionIndex++)
             {
                 Byte[,,] mapped = raw.Data;
-                int[] separation = new int[partition[partitionIndex].Rectangle.Width];
+                int[] separation = new int[partition[partitionIndex].Rect.Width];
 
-                for (int x = partition[partitionIndex].Rectangle.X; x < partition[partitionIndex].Rectangle.X + partition[partitionIndex].Rectangle.Width; x++)
-                    for (int y = partition[partitionIndex].Rectangle.Y; y < partition[partitionIndex].Rectangle.Y + partition[partitionIndex].Rectangle.Height; y++)
+                for (int x = partition[partitionIndex].Rect.X; x < partition[partitionIndex].Rect.X + partition[partitionIndex].Rect.Width; x++)
+                    for (int y = partition[partitionIndex].Rect.Y; y < partition[partitionIndex].Rect.Y + partition[partitionIndex].Rect.Height; y++)
                         if (mapped[y, x, 0] == 0)
-                            separation[x - partition[partitionIndex].Rectangle.X]++;
+                            separation[x - partition[partitionIndex].Rect.X]++;
 
                 List<KeyValuePair<int, int>> white_partition = new List<KeyValuePair<int, int>>();
-                for (int i = partition[partitionIndex].Rectangle.X; i < partition[partitionIndex].Rectangle.X + partition[partitionIndex].Rectangle.Width; i++)
+                for (int i = partition[partitionIndex].Rect.X; i < partition[partitionIndex].Rect.X + partition[partitionIndex].Rect.Width; i++)
                 {
                     int len = 0;
                     int start = 0;
-                    for (start = i; (i + 1 < partition[partitionIndex].Rectangle.X + partition[partitionIndex].Rectangle.Width) && (Math.Abs(separation[i - partition[partitionIndex].Rectangle.X] - separation[i + 1 - partition[partitionIndex].Rectangle.X]) < maximum_possible_noise); i++, len++) ;
-                    if ((len > (partition[partitionIndex].Rectangle.Width / text_size_raito)) || (i == partition[partitionIndex].Rectangle.X + partition[partitionIndex].Rectangle.Width - 1))
+                    for (start = i; (i + 1 < partition[partitionIndex].Rect.X + partition[partitionIndex].Rect.Width) && (Math.Abs(separation[i - partition[partitionIndex].Rect.X] - separation[i + 1 - partition[partitionIndex].Rect.X]) < maximum_possible_noise); i++, len++) ;
+                    if ((len > (partition[partitionIndex].Rect.Width / text_size_raito)) || (i == partition[partitionIndex].Rect.X + partition[partitionIndex].Rect.Width - 1))
                         white_partition.Add(new KeyValuePair<int, int>(start, start + len));
                 }
 
                 if (white_partition.Count > 0)
                     for (int i = 1; i < white_partition.Count; i++)
                     {
-                        TemplateElement currentElement = new TemplateElement(new Rectangle(white_partition[i - 1].Value, partition[partitionIndex].Rectangle.Y, white_partition[i].Key - white_partition[i - 1].Value, partition[partitionIndex].Rectangle.Height), "VE");
+                        TemplateElement currentElement = new TemplateElement(new Rectangle(white_partition[i - 1].Value, partition[partitionIndex].Rect.Y, white_partition[i].Key - white_partition[i - 1].Value, partition[partitionIndex].Rect.Height), "VE");
                         partition[partitionIndex].TemplateContainer.Add(currentElement);
                         partition.Add(currentElement);
                     }
@@ -121,7 +121,7 @@ namespace Enterra.DocumentLayoutAnalysis.Model
             return partition;
         }
 
-        public override IList<TemplateElement> buildPartition(Bitmap inputImage)
+        public override TemplateElementMananger buildPartition(Bitmap inputImage)
         {
             throw new NotImplementedException();
         }

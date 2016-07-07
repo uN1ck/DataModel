@@ -142,7 +142,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataModel\TemlateElementComposer.cs" />
     <Compile Include="DataModel\TemplateElement.cs" />
+    <Compile Include="DataModel\TemplateElementMananger.cs" />
     <Compile Include="Model\Preprocessing\DilatedImageFilter.cs" />
     <Compile Include="Model\Preprocessing\IImageBinarizationFilter.cs" />
     <Compile Include="Model\Preprocessing\NaiveImageFilter.cs" />

@@ -14,7 +14,14 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.Column="0" MinHeight="100" MinWidth="100" BorderBrush="Black" BorderThickness="2" Margin="5">
-            <Image x:Name="Image_PrevievDocument" Stretch="Uniform"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" x:Name="Image_OriginalDocument" MouseLeftButtonDown="Image_OriginalDocument_MouseLeftButtonDown" />
+                <Image Grid.Column="1" x:Name="Image_ProcessedDocument"/>
+            </Grid>
         </Border>
         <TabControl Grid.Column="1">
             <TabItem>
@@ -27,8 +34,8 @@
                         <Button x:Name="Button_ApplyFilter" Content="Применить фильтр" Margin="5" Click="Button_ApplyFilter_Click"/>
                         <Button x:Name="Button_DetectRegions" Content="Выбрать регионы" Margin="5" Click="Button_DetectRegions_Click" />
 
-                        <CustomControllers:DilatedImageFilterController x:Name="PreprocessingController"/>
-                        <CustomControllers:CannyContourProcessingController x:Name="ProcessingController"/>
+                        <CustomControllers:DilatedImageFilterController x:Name="PreprocessingController" Margin="5"/>
+                        <CustomControllers:CannyContourProcessingController x:Name="ProcessingController" Margin="5"/>
                     </StackPanel>
                 </TabItem.Content>
             </TabItem>
@@ -38,7 +45,7 @@
                 </TabItem.Header>
                 <TabItem.Content>
                     <StackPanel>
-                        
+                        <CustomControllers:TemplateElementController x:Name="TemplateElementController" Margin="5"/>
                     </StackPanel>
                 </TabItem.Content>
             </TabItem>

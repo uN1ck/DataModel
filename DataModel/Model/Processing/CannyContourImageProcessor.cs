@@ -54,8 +54,7 @@ namespace Enterra.DocumentLayoutAnalysis.Model
         }
 
 
-
-        public override IList<TemplateElement> buildPartition(Bitmap inputImage)
+        public override TemplateElementMananger buildPartition(Bitmap inputImage)
         {
             raw = new Image<Gray, byte>(inputImage);
             List<TemplateElement> partition = new List<TemplateElement>();
@@ -88,9 +87,8 @@ namespace Enterra.DocumentLayoutAnalysis.Model
             {
                 throw new Exception(ex.Message);
             }
-            this.partition = partition;
-            mergeCrossingRectangles();
-            return partition;
+            
+            return new TemplateElementMananger(mergeCrossingRectangles(partition));
         }
 
         /// <summary>
@@ -111,24 +109,25 @@ namespace Enterra.DocumentLayoutAnalysis.Model
         /// <summary>
         /// Метод слияния пересекающихся прямоугольников
         /// </summary>
-        private void mergeCrossingRectangles()
+        private List<TemplateElement> mergeCrossingRectangles(List<TemplateElement> inputPartition)
         {
-            bool isAdding = false;
+            List<TemplateElement> partition = new List<TemplateElement>(inputPartition);
 
+            bool isAdding = false;
             partition.Sort((TemplateElement l, TemplateElement r) =>
             {
-                return ((l.Rectangle.Width * l.Rectangle.Height > r.Rectangle.Width * r.Rectangle.Height) ? 1 : -1);
+                return ((l.Rect.Width * l.Rect.Height > r.Rect.Width * r.Rect.Height) ? 1 : -1);
             });
 
             for (int i = 0; i < partition.Count; i++)
             {
                 for (int k = i+1; k < partition.Count; k++)
-                    if ((i != k) && (!rectangleCross(partition[k].Rectangle, partition[i].Rectangle)))
+                    if ((i != k) && (!rectangleCross(partition[k].Rect, partition[i].Rect)))
                     {
                         if (isAdding)
                         {
-                            Point leftUpCorner = new Point(Math.Min(partition[i].Rectangle.X, partition[k].Rectangle.X), Math.Min(partition[i].Rectangle.Y, partition[k].Rectangle.Y));
-                            Point rightBottomCorner = new Point(Math.Min(partition[i].Rectangle.Right, partition[k].Rectangle.Right) - leftUpCorner.X, Math.Min(partition[i].Rectangle.Bottom, partition[k].Rectangle.Bottom) - leftUpCorner.Y);
+                            Point leftUpCorner = new Point(Math.Min(partition[i].Rect.X, partition[k].Rect.X), Math.Min(partition[i].Rect.Y, partition[k].Rect.Y));
+                            Point rightBottomCorner = new Point(Math.Min(partition[i].Rect.Right, partition[k].Rect.Right) - leftUpCorner.X, Math.Min(partition[i].Rect.Bottom, partition[k].Rect.Bottom) - leftUpCorner.Y);
 
                             partition.Add(new TemplateElement(new Rectangle(leftUpCorner.X, leftUpCorner.Y, rightBottomCorner.X, rightBottomCorner.Y), "UN_" + i));
 
@@ -144,8 +143,7 @@ namespace Enterra.DocumentLayoutAnalysis.Model
                         break;
                     }
             }
+            return partition;
         }
-
-        
     }
 }

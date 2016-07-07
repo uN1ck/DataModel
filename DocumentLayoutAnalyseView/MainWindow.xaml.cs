@@ -13,10 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Enterra.DocumentLayoutAnalysis.Model;
 using Microsoft.Win32;
 using System.Drawing;
 using System.IO;
+
+using Enterra.DocumentLayoutAnalysis.Model;
 
 namespace DocumentLayoutAnalyseView
 {
@@ -25,19 +26,37 @@ namespace DocumentLayoutAnalyseView
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Bitmap original;
-        private Bitmap processed;
+        TemlateElementComposer templateElementComposer;
 
         public MainWindow()
         {
             InitializeComponent();
+            templateElementComposer = new TemlateElementComposer();
+            templateElementComposer.ImageBinarizationFilter = PreprocessingController.ImageBinarizationFilter;
+            templateElementComposer.ImageProcessor = ProcessingController.ImageProcessor;
+            templateElementComposer.RedrawElemetsHandler += onRedrawElemets;
+        }
+
+        protected void onRedrawElemets(TemlateElementComposer sender)
+        {
+            this.templateElementComposer = sender;
+            drawImages();
+            Image_OriginalDocument.Source = Convert(templateElementComposer.Masked);
         }
 
         private void Button_ApplyFilter_Click(object sender, RoutedEventArgs e)
         {
-            processed = PreprocessingController.ImageBinarizationFilter.BinarizeImage(original);
-            Image_PrevievDocument.Source = Convert(processed);
+            templateElementComposer.PreprocessImage();
+            drawImages();
         }
+
+        private void Button_DetectRegions_Click(object sender, RoutedEventArgs e)
+        {
+            templateElementComposer.ProcessImage();
+            drawImages();
+            Image_OriginalDocument.Source = Convert(templateElementComposer.Masked);
+        }
+
 
         private void Button_OpenOriginalImage_Click(object sender, RoutedEventArgs e)
         {
@@ -49,21 +68,15 @@ namespace DocumentLayoutAnalyseView
 
             if (ofd.FileName != "" || ofd.FileName != null)
             {
-                original = new Bitmap(ofd.FileName);
-                Image_PrevievDocument.Source = Convert(original);
-            }
-            else
-            {
-                original = new Bitmap(1, 1);
-                processed = new Bitmap(1, 1);
-                Image_PrevievDocument.Source = Convert(original);
+                templateElementComposer.Original = new Bitmap(ofd.FileName);
+                drawImages();
             }
         }
 
-        private void Button_DetectRegions_Click(object sender, RoutedEventArgs e)
+        private void drawImages()
         {
-            ProcessingController.ImageProcessor.buildPartition(processed);
-            Image_PrevievDocument.Source = Convert(ProcessingController.ImageProcessor.DrawMask(original));
+            Image_OriginalDocument.Source = Convert(templateElementComposer.Original);
+            Image_ProcessedDocument.Source = Convert(templateElementComposer.Preprocessed);
         }
 
         private BitmapImage Convert(Bitmap inputValue)
@@ -77,6 +90,20 @@ namespace DocumentLayoutAnalyseView
             ObjBitmapImage.StreamSource = Ms;
             ObjBitmapImage.EndInit();
             return ObjBitmapImage;
-        }      
+        }
+
+        private void Image_OriginalDocument_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            double property = templateElementComposer.Original.Width / ((double)Image_OriginalDocument.ActualWidth);
+            try
+            {
+                System.Drawing.Point cursorPosition = new System.Drawing.Point((int)(e.GetPosition(Image_OriginalDocument as IInputElement).X * property), (int)(e.GetPosition(Image_OriginalDocument as IInputElement).Y * property));
+                TemplateElementController.setSelectedTemplateElement(
+                templateElementComposer.TemplateElementMananger.getElementAtPoint(cursorPosition));
+            } catch (NullReferenceException ex)
+            {
+
+            }
+        }
     }
 }

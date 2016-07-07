@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="DocumentLayoutAnalyseView.CustomControllers.TemplateElementController"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DocumentLayoutAnalyseView.CustomControllers"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="300">
+    <GroupBox Header="Регион">
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <Label Content="Название региона" VerticalAlignment="Center" Margin="5"/>
+                <TextBox x:Name="TextBox_RegionName" Height="20" Margin="5" VerticalAlignment="Center" Width="120"
+                              Text="{Binding Path=RectangleName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
+                    <Label Content="X:" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="TextBox_LeftTopX" Height="20" Width="80" 
+                                     Text="{Binding Path=RectangleX, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <Label Content="Width:" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="TextBox_LeftTopWidth" Height="20" Width="80" 
+                                    Text="{Binding Path=RectangleWidth, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+                    <Label Content="Y:" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="TextBox_LeftTopY" Height="20" Width="80" 
+                                    Text="{Binding Path=RectangleY, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                    <Label Content="Height:" VerticalAlignment="Center"/>
+                    <TextBox  x:Name="TextBox_LeftTopHeight" Height="20" Width="80" 
+                                    Text="{Binding Path=RectangleHeight, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                </StackPanel>
+            </Grid>
+            <TextBox x:Name="TextBox_DescriptionRegion" HorizontalAlignment="Left" Height="51" Margin="10,10,0,0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" Width="268" VerticalScrollBarVisibility="Auto" Text="{Binding Path=RectangleDescription, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+
+        </Grid>
+    </GroupBox>
+
+</UserControl>
