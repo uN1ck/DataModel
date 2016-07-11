@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Enterra.DocumentLayoutAnalysis.Model
 {
-    public class TopDownImageProcessor : ImageProcessor
-    {
+    public class TopDownImageProcessor : IImageProcessor
+    {/*
         private double maximumPossibleNoise;
         /// <summary>
         /// Порог случайного шума между строками
@@ -120,8 +120,8 @@ namespace Enterra.DocumentLayoutAnalysis.Model
             }
             return partition;
         }
-
-        public override TemplateElementMananger buildPartition(Bitmap inputImage)
+        */
+        public TemplateElementMananger buildPartition(Bitmap inputImage)
         {
             throw new NotImplementedException();
         }

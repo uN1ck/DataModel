@@ -11,8 +11,7 @@ namespace DocumentLayoutAnalyseView.CustomControllers
 
         private CannyContourImageProcessor cannyContourImageProcessor;
         public CannyContourImageProcessor CannyContourImageProcessor { set { cannyContourImageProcessor = value; } }
-
-        public ImageProcessor ImageProcessor { get { return cannyContourImageProcessor; } }
+        public IImageProcessor ImageProcessor { get { return cannyContourImageProcessor; } }
 
         public CannyContourProcessingController()
         {
@@ -49,12 +48,6 @@ namespace DocumentLayoutAnalyseView.CustomControllers
         {
             set { cannyContourImageProcessor.RectangleCrossPercent = value; }
             get { return cannyContourImageProcessor.RectangleCrossPercent; }
-        }
-
-        public int LineWidth
-        {
-            set { cannyContourImageProcessor.LineWidth = value; }
-            get { return cannyContourImageProcessor.LineWidth; }
         }
     }
 }

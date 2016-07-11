@@ -5,40 +5,41 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DocumentLayoutAnalyseView.CustomControllers"
              mc:Ignorable="d" 
-             d:DesignHeight="240" d:DesignWidth="300">
+             d:DesignHeight="260" d:DesignWidth="320">
 
-
+    <GroupBox Header="Настройки препроцессинга Dilate">
         <Grid Margin="0,0,0,0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="80"></RowDefinition>
-            <RowDefinition/>
-            <RowDefinition Height="80"></RowDefinition>
-        </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="80"></RowDefinition>
+                <RowDefinition/>
+                <RowDefinition Height="80"></RowDefinition>
+            </Grid.RowDefinitions>
 
-        <Slider Grid.Row="0" x:Name="Slider_KernelSize" HorizontalAlignment="Left" 
-                Margin="10,52,0,0" VerticalAlignment="Top" Width="280" Height="18" 
-                Minimum="0" Maximum="50" Value="{Binding Path=KernelSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                SmallChange="1" IsSnapToTickEnabled="True" />
-        <Label Grid.Row="0" x:Name="Label_KernelSize" Content="Размер ядра для операции Dilate" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193"/>
-        <TextBox Grid.Row="0" x:Name="TextBox_KernelSize" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
-                 Text="{Binding ElementName=Slider_KernelSize, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Slider Grid.Row="0" x:Name="Slider_KernelSize" HorizontalAlignment="Left" 
+                    Margin="10,52,0,0" VerticalAlignment="Top" Width="280" Height="18" 
+                    Minimum="0" Maximum="50" Value="{Binding Path=KernelSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    SmallChange="1" IsSnapToTickEnabled="True" />
+            <Label Grid.Row="0" x:Name="Label_KernelSize" Content="Размер ядра для операции Dilate" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193"/>
+            <TextBox Grid.Row="0" x:Name="TextBox_KernelSize" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
+                     Text="{Binding ElementName=Slider_KernelSize, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Slider Grid.Row="1" x:Name="Slider_MaxBrightness" HorizontalAlignment="Left" 
-                Margin="10,53,0,0" VerticalAlignment="Top" Width="280" Height="18" 
-                Minimum="0" Maximum="254" Value="{Binding Path=MaxBrightness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                SmallChange="1" IsSnapToTickEnabled="True"/>
-        <Label Grid.Row="1" x:Name="Label_MaxBrightness" Content="Порог яркости" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193"/>
-        <TextBox Grid.Row="1" x:Name="TextBox_MaxBrightness" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
-                 Text="{Binding ElementName=Slider_MaxBrightness, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Slider Grid.Row="1" x:Name="Slider_MaxBrightness" HorizontalAlignment="Left" 
+                    Margin="10,53,0,0" VerticalAlignment="Top" Width="280" Height="18" 
+                    Minimum="0" Maximum="254" Value="{Binding Path=MaxBrightness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    SmallChange="1" IsSnapToTickEnabled="True"/>
+            <Label Grid.Row="1" x:Name="Label_MaxBrightness" Content="Порог яркости" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193"/>
+            <TextBox Grid.Row="1" x:Name="TextBox_MaxBrightness" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
+                     Text="{Binding ElementName=Slider_MaxBrightness, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <Slider Grid.Row="2" x:Name="Slider_DilateCount" HorizontalAlignment="Left" 
-                Margin="10,52,0,0" VerticalAlignment="Top" Width="280" Height="18" 
-                Minimum="0" Maximum="50" Value="{Binding Path=DilateCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                SmallChange="1" IsSnapToTickEnabled="True"/>
-        <Label Grid.Row="2" x:Name="Label_DilateCount" Content="Количество повторений операции Dilate" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193" />
-        <TextBox Grid.Row="2" x:Name="TextBox_DilateCount" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
-                 Text="{Binding ElementName=Slider_DilateCount, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Slider Grid.Row="2" x:Name="Slider_DilateCount" HorizontalAlignment="Left" 
+                    Margin="10,52,0,0" VerticalAlignment="Top" Width="280" Height="18" 
+                    Minimum="0" Maximum="50" Value="{Binding Path=DilateCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                    SmallChange="1" IsSnapToTickEnabled="True"/>
+            <Label Grid.Row="2" x:Name="Label_DilateCount" Content="Количество повторений операции Dilate" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.166,0.44" Height="26" Width="193" />
+            <TextBox Grid.Row="2" x:Name="TextBox_DilateCount" HorizontalAlignment="Left" Height="23" Margin="235,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55" 
+                     Text="{Binding ElementName=Slider_DilateCount, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 
-    </Grid>
+        </Grid>
+    </GroupBox>
 </UserControl>

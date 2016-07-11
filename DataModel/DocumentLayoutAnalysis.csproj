@@ -145,11 +145,13 @@
     <Compile Include="DataModel\TemlateElementComposer.cs" />
     <Compile Include="DataModel\TemplateElement.cs" />
     <Compile Include="DataModel\TemplateElementMananger.cs" />
+    <Compile Include="Model\TemplateAnalyse\ITemplateAnalyse.cs" />
+    <Compile Include="Model\TemplateAnalyse\TemplateElementSampleMananger.cs" />
     <Compile Include="Model\Preprocessing\DilatedImageFilter.cs" />
     <Compile Include="Model\Preprocessing\IImageBinarizationFilter.cs" />
     <Compile Include="Model\Preprocessing\NaiveImageFilter.cs" />
     <Compile Include="Model\Processing\CannyContourImageProcessor.cs" />
-    <Compile Include="Model\Processing\ImageProcessor.cs" />
+    <Compile Include="Model\Processing\IImageProcessor.cs" />
     <Compile Include="Model\Processing\TopDownImageProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

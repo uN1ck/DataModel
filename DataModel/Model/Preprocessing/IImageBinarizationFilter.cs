@@ -4,7 +4,7 @@ using System.Drawing;
 namespace Enterra.DocumentLayoutAnalysis.Model
 { 
     /// <summary>
-    /// Интерфейс классов для фильтрации изображения, используетс яв препроцессинге
+    /// Интерфейс классов для фильтрации изображения, используется в препроцессинге
     /// </summary>
     public interface IImageBinarizationFilter
     {

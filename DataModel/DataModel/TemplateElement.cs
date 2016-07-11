@@ -9,39 +9,65 @@ namespace Enterra.DocumentLayoutAnalysis.Model
     /// Базовый класс для работы с шаблоном документа,
     /// содержит в себе заголовк элемента документа и
     /// контент элемента документа.
-    /// Основа для построения дерева разбора документа
     /// </summary>
     public class TemplateElement
     {
-        /// <summary>
-        /// Список потомков вершины дерева разбора
-        /// </summary>
-        public List<TemplateElement> TemplateContainer { set; get; }
 
+        private Rectangle rectangle;
         /// <summary>
         /// Коробка-граница региона интереса, являющегося вершиной дерева разбора
         /// </summary>
-        public Rectangle Rect{ set; get; }
+        public Rectangle Rectangle
+        {
+            set
+            {
+                rectangle = value;
+                RaiseTempleateElementChangedEvent();
+            }
+            get
+            {
+                return rectangle;
+            }
+        }
 
+        private String name;
         /// <summary>
         /// Заголовок вершины дерева разбора
         /// </summary>
-        public String Name { set; get; }
+        public String Name
+        {
+            set
+            {
+                name = value;
+                RaiseTempleateElementChangedEvent();
+            }
+            get
+            {
+                return name;
+            }
+        }
 
+        private List<String> marks;
         /// <summary>
         /// Массив строковых меток региона
         /// </summary>
-        public IList<String> Marks { set; get; }
-
-        /// <summary>
-        /// Ссылка на предка в дереве резбора
-        /// </summary>
-        public TemplateElement Parent { set; get; }
+        public IList<String> Marks
+        {
+            set
+            {
+                marks = value as List<String>;
+                RaiseTempleateElementChangedEvent();
+            }
+            get
+            {
+                return marks;
+            }
+        }
 
         /// <summary>
         /// Делегат обработки события изменения элемента
         /// </summary>
-        /// <param name="templateElementContainer"></param>
+        /// <param name="templateElementContainer">Измененный элемент</param>
         public delegate void TempleateElementChanged(TemplateElement templateElementContainer);
         /// <summary>
         /// Событие изменения элемента
@@ -50,37 +76,53 @@ namespace Enterra.DocumentLayoutAnalysis.Model
         /// <summary>
         /// Источник события
         /// </summary>
-        /// <param name="selectedTemplateElement"></param>
-        public virtual void RaiseTempleateElementChangedEvent(TemplateElement selectedTemplateElement)
+        protected virtual void RaiseTempleateElementChangedEvent()
         {
             if (TempleateElementChangedHandler != null)
                 TempleateElementChangedHandler(this);
         }
 
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
+        /// <param name="rect">Регион</param>
+        /// <param name="name">Имя региона</param>
         public TemplateElement(Rectangle rect, String name)
         {
-            TemplateContainer = new List<TemplateElement>();
             Name = name;
-            Rect = rect;
+            Rectangle = rect;
             Marks = new List<String>();
         }
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
+        /// <param name="rect">Регион</param>
         public TemplateElement(Rectangle rect)
         {
-            TemplateContainer = new List<TemplateElement>();
+            
             Name = "New simple element";
-            Rect = rect;
+            Rectangle = rect;
             Marks = new List<string>();
         }
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
         public TemplateElement()
         {
-            TemplateContainer = new List<TemplateElement>();
+            
             Name = "New simple element";
-            Rect = new Rectangle();
+            Rectangle = new Rectangle();
             Marks = new List<String>();
         }
 
+        public TemplateElement(TemplateElement templateElement)
+        {
+            rectangle = templateElement.rectangle;
+            name = templateElement.name;
+            marks = new List<String>(templateElement.marks);
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace DataModel
     {
         static void Main(string[] args)
         {
+            /*
             Stopwatch t = Stopwatch.StartNew();
 
             Bitmap picture = new Bitmap(@"C:\Users\madn1\Documents\Visual Studio 2015\Projects\DataModel\DataModel\Docs Examples\snils.jpg");
@@ -28,7 +29,7 @@ namespace DataModel
             Console.WriteLine(t.ElapsedMilliseconds);
             Console.WriteLine(t.ElapsedTicks);
             Console.ReadKey();
-            
+            */
         }
     }
 }

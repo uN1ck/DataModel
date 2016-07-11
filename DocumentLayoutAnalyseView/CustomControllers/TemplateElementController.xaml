@@ -10,14 +10,14 @@
         <Grid>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="2*"></RowDefinition>
-                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <Label Content="Название региона" VerticalAlignment="Center" Margin="5"/>
-                <TextBox x:Name="TextBox_RegionName" Height="20" Margin="5" VerticalAlignment="Center" Width="120"
+                <TextBox x:Name="TextBox_RegionName" Height="20" Margin="5,5" VerticalAlignment="Center" Width="155"
                               Text="{Binding Path=RectangleName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
             </StackPanel>
 
@@ -38,7 +38,7 @@
                                      Text="{Binding Path=RectangleX, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
                 </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-                    <Label Content="Width:" VerticalAlignment="Center"/>
+                    <Label Content="Ширина:" VerticalAlignment="Center"/>
                     <TextBox  x:Name="TextBox_LeftTopWidth" Height="20" Width="80" 
                                     Text="{Binding Path=RectangleWidth, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 </StackPanel>
@@ -48,7 +48,7 @@
                                     Text="{Binding Path=RectangleY, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-                    <Label Content="Height:" VerticalAlignment="Center"/>
+                    <Label Content="Высота:  " VerticalAlignment="Center"/>
                     <TextBox  x:Name="TextBox_LeftTopHeight" Height="20" Width="80" 
                                     Text="{Binding Path=RectangleHeight, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 </StackPanel>
@@ -59,3 +59,4 @@
     </GroupBox>
 
 </UserControl>
+

@@ -12,12 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using Microsoft.Win32;
 using System.Drawing;
 using System.IO;
-
 using Enterra.DocumentLayoutAnalysis.Model;
+using Newtonsoft.Json;
 
 namespace DocumentLayoutAnalyseView
 {
@@ -26,40 +25,54 @@ namespace DocumentLayoutAnalyseView
     /// </summary>
     public partial class MainWindow : Window
     {
-        TemlateElementComposer templateElementComposer;
+        private TemlateElementComposer TemplateElementComposer;
 
         public MainWindow()
         {
             InitializeComponent();
-            templateElementComposer = new TemlateElementComposer();
-            templateElementComposer.ImageBinarizationFilter = PreprocessingController.ImageBinarizationFilter;
-            templateElementComposer.ImageProcessor = ProcessingController.ImageProcessor;
-            templateElementComposer.RedrawElemetsHandler += onRedrawElemets;
+            
+            this.DataContext = this;
+            Init();
+        }
+
+        /// <summary>
+        /// Метод инициализации
+        /// </summary>
+        private void Init()
+        {
+            TemplateElementComposer = new TemlateElementComposer();
+            CustomPreprocessingController.DilatedImageFilter = new DilatedImageFilter();
+            CustomProcessingController.CannyContourImageProcessor = new CannyContourImageProcessor();
+            CustomTempalteElementSampleController.TemplateElementSampleMananger = new TemplateElementSampleMananger();
+
+            TemplateElementComposer.ImageBinarizationFilter = CustomPreprocessingController.ImageBinarizationFilter;
+            TemplateElementComposer.ImageProcessor = CustomProcessingController.ImageProcessor;
+            TemplateElementComposer.TemplateAnalyse = CustomTempalteElementSampleController.TemplateAnalyse;
+            TemplateElementComposer.Original = new Bitmap(1, 1);
+
+            TemplateElementComposer.RedrawElemetsHandler += onRedrawElemets;
         }
 
         protected void onRedrawElemets(TemlateElementComposer sender)
         {
-            this.templateElementComposer = sender;
-            drawImages();
-            Image_OriginalDocument.Source = Convert(templateElementComposer.Masked);
+            ImageOriginalDocument.Source = Convert(TemplateElementComposer.Original);
+            ImageProcessedDocument.Source = Convert(TemplateElementComposer.Preprocessed);
+            ImageMaskedDocument.Source = Convert(TemplateElementComposer.Preview);
         }
 
         private void Button_ApplyFilter_Click(object sender, RoutedEventArgs e)
         {
-            templateElementComposer.PreprocessImage();
-            drawImages();
+            TemplateElementComposer.PreprocessImage();
         }
 
         private void Button_DetectRegions_Click(object sender, RoutedEventArgs e)
         {
-            templateElementComposer.ProcessImage();
-            drawImages();
-            Image_OriginalDocument.Source = Convert(templateElementComposer.Masked);
+            TemplateElementComposer.DetectRegions();
         }
-
 
         private void Button_OpenOriginalImage_Click(object sender, RoutedEventArgs e)
         {
+            
 
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Multiselect = false;
@@ -68,17 +81,48 @@ namespace DocumentLayoutAnalyseView
 
             if (ofd.FileName != "" || ofd.FileName != null)
             {
-                templateElementComposer.Original = new Bitmap(ofd.FileName);
-                drawImages();
+                TemplateElementComposer.Original = new Bitmap(ofd.FileName);
             }
         }
 
-        private void drawImages()
+        private void Button_FilterRegions_Click(object sender, RoutedEventArgs e)
         {
-            Image_OriginalDocument.Source = Convert(templateElementComposer.Original);
-            Image_ProcessedDocument.Source = Convert(templateElementComposer.Preprocessed);
+            TemplateElementComposer.FilterRegions(CustomTempalteElementSampleController.KernelSize);
         }
 
+
+        private void Button_GenerateRegionsSample_Click(object sender, RoutedEventArgs e)
+        {
+            var jsonTemplate = JsonConvert.SerializeObject(TemplateElementComposer.TemplateElementMananger);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Sample files|*.sample";
+            saveFileDialog.ShowDialog();
+
+            if (saveFileDialog.SafeFileName != "")
+            {
+                StreamWriter sw = File.CreateText(saveFileDialog.FileName);
+                sw.Write(jsonTemplate);
+                sw.Close();
+            }
+        }
+
+        private void Image_OriginalDocument_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            double coef = TemplateElementComposer.Original.Width/ (double)ImageMaskedDocument.ActualWidth ;
+            System.Drawing.Point currentPosition =
+                new System.Drawing.Point((int) (e.GetPosition(ImageMaskedDocument as IInputElement).X*coef),
+                    (int) (e.GetPosition(ImageMaskedDocument as IInputElement).Y*coef));
+            TemplateElement selected = TemplateElementComposer.TemplateElementMananger.getElementAtPoint(currentPosition);
+            if (selected != null)
+                CustomTemplateElementController.ControlledTemplatElement = selected;
+        }
+
+
+        /// <summary>
+        /// Метод конвертации битмапов в image.битмапы
+        /// </summary>
+        /// <param name="inputValue"></param>
+        /// <returns></returns>
         private BitmapImage Convert(Bitmap inputValue)
         {
             MemoryStream Ms = new MemoryStream();
@@ -90,20 +134,6 @@ namespace DocumentLayoutAnalyseView
             ObjBitmapImage.StreamSource = Ms;
             ObjBitmapImage.EndInit();
             return ObjBitmapImage;
-        }
-
-        private void Image_OriginalDocument_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            double property = templateElementComposer.Original.Width / ((double)Image_OriginalDocument.ActualWidth);
-            try
-            {
-                System.Drawing.Point cursorPosition = new System.Drawing.Point((int)(e.GetPosition(Image_OriginalDocument as IInputElement).X * property), (int)(e.GetPosition(Image_OriginalDocument as IInputElement).Y * property));
-                TemplateElementController.setSelectedTemplateElement(
-                templateElementComposer.TemplateElementMananger.getElementAtPoint(cursorPosition));
-            } catch (NullReferenceException ex)
-            {
-
-            }
         }
     }
 }

@@ -13,44 +13,83 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" MinHeight="100" MinWidth="100" BorderBrush="Black" BorderThickness="2" Margin="5">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" x:Name="Image_OriginalDocument" MouseLeftButtonDown="Image_OriginalDocument_MouseLeftButtonDown" />
-                <Image Grid.Column="1" x:Name="Image_ProcessedDocument"/>
-            </Grid>
-        </Border>
-        <TabControl Grid.Column="1">
+        <!-- Разметка левой части окна, три изображения превьюшки-->
+        
+        <TabControl Grid.Column="0" MinHeight="100" MinWidth="100" Margin="0,0,5,0">
             <TabItem>
                 <TabItem.Header>
-                    <TextBlock Margin="3">Процессинг</TextBlock>
+                    <TextBlock Margin="3">Оригинал</TextBlock>
                 </TabItem.Header>
                 <TabItem.Content>
-                    <StackPanel  >
-                        <Button x:Name="Button_OpenOriginalImage" Content="Открыть изображение" Margin="5" Click="Button_OpenOriginalImage_Click" />
-                        <Button x:Name="Button_ApplyFilter" Content="Применить фильтр" Margin="5" Click="Button_ApplyFilter_Click"/>
-                        <Button x:Name="Button_DetectRegions" Content="Выбрать регионы" Margin="5" Click="Button_DetectRegions_Click" />
+                    <Image x:Name="ImageOriginalDocument" />
+                </TabItem.Content>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Margin="3">Обработаное изображение</TextBlock>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Image x:Name="ImageProcessedDocument" />
+                </TabItem.Content>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Margin="3">Разбитое изображение</TextBlock>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Image x:Name="ImageMaskedDocument" MouseLeftButtonDown="Image_OriginalDocument_MouseLeftButtonDown" />
+                </TabItem.Content>
+            </TabItem>
 
-                        <CustomControllers:DilatedImageFilterController x:Name="PreprocessingController" Margin="5"/>
-                        <CustomControllers:CannyContourProcessingController x:Name="ProcessingController" Margin="5"/>
-                    </StackPanel>
-                </TabItem.Content>
-            </TabItem>
-            <TabItem>
-                <TabItem.Header>
-                    <TextBlock Margin="3">Редактирование регионов</TextBlock>
-                </TabItem.Header>
-                <TabItem.Content>
-                    <StackPanel>
-                        <CustomControllers:TemplateElementController x:Name="TemplateElementController" Margin="5"/>
-                    </StackPanel>
-                </TabItem.Content>
-            </TabItem>
-            
         </TabControl>
+        
 
+        <!-- Разметка правой части окна, натсройки изображений-->
+        <StackPanel Grid.Column="1">
+            <TabControl >
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Margin="3">Препроцессинг</TextBlock>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <StackPanel  >
+                            <CustomControllers:DilatedImageFilterController x:Name="CustomPreprocessingController" Margin="5"/>
+                            <Button x:Name="ButtonApplyFilter" Content="Применить фильтр" Margin="5" Click="Button_ApplyFilter_Click"/>
+
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Margin="3">Процессинг</TextBlock>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <StackPanel  >
+                            <CustomControllers:CannyContourProcessingController x:Name="CustomProcessingController" Margin="5"/>
+                            <Button x:Name="ButtonDetectRegions" Content="Выбрать регионы" Margin="5" Click="Button_DetectRegions_Click" />
+
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+
+
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Margin="3">Редактирование регионов</TextBlock>
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <StackPanel>
+                            <CustomControllers:TemplateElementController x:Name="CustomTemplateElementController" Margin="5"/>
+                            <CustomControllers:TemplateElementSampleManangerController x:Name="CustomTempalteElementSampleController" Margin="5"/>
+                            <Button x:Name="ButtonGeneratTemplate" Content="Сгенерировать оразец разбиения" Margin="5" Click="Button_GenerateRegionsSample_Click" />
+                            <Button x:Name="ButtonFilterRegions" Content="Фильтровать регионы" Margin="5" Click="Button_FilterRegions_Click" />
+                        </StackPanel>
+                    </TabItem.Content>
+                </TabItem>
+
+            </TabControl>
+            <Button x:Name="ButtonOpenOriginalImage" Content="Открыть изображение" Margin="5" Click="Button_OpenOriginalImage_Click" />
+        </StackPanel>
     </Grid>
 </Window>

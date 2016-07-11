@@ -12,26 +12,128 @@ namespace Enterra.DocumentLayoutAnalysis.Model
     /// </summary>
     public class TemlateElementComposer
     {
+
         private Bitmap original;
-        public Bitmap Original { set
+        /// <summary>
+        /// Оригинал изображения
+        /// </summary>
+        public Bitmap Original
+        {
+            set
             {
                 original = new Bitmap(value);
-                Preprocessed = new Bitmap(value);
-                Masked = new Bitmap(value);
+                preprocessed = new Bitmap(value);
+                preview = new Bitmap(value);
+                TemplateElementMananger.OriginalSize = original.Size;
+                RaiseRedrawElemetsEvent();
             }
-            get { return original; }
+            get
+            {
+                return original;
+            }
         }
-        public Bitmap Preprocessed { set; get; }
-        public Bitmap Masked { set; get; }
 
+        private Bitmap preprocessed;
+        /// <summary>
+        /// Изображение пропущенное через фильтры препроцессинга
+        /// </summary>
+        public Bitmap Preprocessed { get { return preprocessed; } }
+
+        public Bitmap preview;
+        /// <summary>
+        /// Предварительный просмотр разбиения на регионы
+        /// </summary>
+        public Bitmap Preview { get { return preview; } }
+
+        /// <summary>
+        /// Интерфейс препроцессинга
+        /// </summary>
         public IImageBinarizationFilter ImageBinarizationFilter { set; get; }
-        public ImageProcessor ImageProcessor { set; get; }
-        public TemplateElementMananger TemplateElementMananger { set; get; }
+        /// <summary>
+        /// Интерфейс процессинга
+        /// </summary>
+        public IImageProcessor ImageProcessor { set; get; }
+        /// <summary>
+        /// Интерфейс анализа изображения на основе примера
+        /// </summary>
+        public ITemplateAnalyse TemplateAnalyse { set; get; }
+     
+        private TemplateElementMananger templateElementMananger;
+        /// <summary>
+        /// Текущее разбиение на регионы
+        /// </summary>
+        public TemplateElementMananger TemplateElementMananger {
+            get { return templateElementMananger; }
+        }
+
+        public TemlateElementComposer(Bitmap inputImage = null)
+        {
+            templateElementMananger = new TemplateElementMananger();
+            if (inputImage != null)
+            {
+                Original = new Bitmap(inputImage);
+                preprocessed = new Bitmap(inputImage);
+                preview = new Bitmap(inputImage);
+            }
+            else
+            {
+                Original = new Bitmap(1, 1);
+                preprocessed = new Bitmap(1, 1);
+                preview = new Bitmap(1, 1);
+            }
+            
+        }
+
+        /// <summary>
+        /// Метод препроцессинга изображения, сохраняет данные препроцесинга как в класс так и возвращает полученное изображение
+        /// </summary>
+        public void PreprocessImage()
+        {
+            preprocessed = ImageBinarizationFilter.BinarizeImage(Original);
+            RaiseRedrawElemetsEvent();
+        }
+
+        /// <summary>
+        /// Метод выделения регионов на изображении, сохраняет данные препроцесинга как в класс так и возвращает полученное изображение
+        /// </summary>
+        public void DetectRegions()
+        {
+            templateElementMananger = ImageProcessor.buildPartition(Preprocessed);
+            TemplateElementMananger.TempleateElementsChangedHandler += onTempleateElementsContainerChanged;
+            drawRectangles();
+            RaiseRedrawElemetsEvent();
+        }
+
+        /// <summary>
+        /// Метод фильтрации регионов
+        /// </summary>
+        /// <param name="distance"></param>
+        public void FilterRegions(double distance)
+        {
+            templateElementMananger = TemplateAnalyse.FilterRegions(TemplateElementMananger);
+            drawRectangles();
+            RaiseRedrawElemetsEvent();
+        }
+
+        /// <summary>
+        /// Метод отрисовки регионов изображения
+        /// </summary>
+        private void drawRectangles()
+        {
+            preview = new Bitmap(original);
+            Graphics rectangles = Graphics.FromImage(preview);
+            foreach (TemplateElement current in TemplateElementMananger.TemplateElementContainer)
+                rectangles.DrawRectangle(new Pen(Brushes.Red,5), current.Rectangle);
+            //TODO: размер изменить
+
+        }
 
 
-        public delegate void RedrawElemets(TemlateElementComposer sender);
-        public event RedrawElemets RedrawElemetsHandler;
-        public virtual void RaiseRedrawElemetsEvent()
+        public delegate void RedrawElemetsEvent(TemlateElementComposer sender);
+
+        public event RedrawElemetsEvent RedrawElemetsHandler;
+
+        protected virtual void RaiseRedrawElemetsEvent()
         {
             if (RedrawElemetsHandler != null)
             {
@@ -39,48 +141,11 @@ namespace Enterra.DocumentLayoutAnalysis.Model
             }
         }
 
-        protected void onTempleateElementsContainerChanged(List<TemplateElement> templateElementContainer)
+        protected void onTempleateElementsContainerChanged(TemplateElementMananger templateElementContainer)
         {
-            TemplateElementMananger = new TemplateElementMananger(templateElementContainer);
+            templateElementMananger = templateElementContainer;
             drawRectangles();
             RaiseRedrawElemetsEvent();
         }
-
-        public TemlateElementComposer(Bitmap inputImage = null)
-        {
-            if (inputImage != null)
-            {
-                Original = new Bitmap(inputImage);
-                Preprocessed = new Bitmap(inputImage);
-                Masked = new Bitmap(inputImage);
-            }
-            else
-            {
-                Original = new Bitmap(1,1);
-                Preprocessed = new Bitmap(1, 1);
-                Masked = new Bitmap(1, 1);
-            }
-        }
-
-        public void PreprocessImage()
-        {
-            Preprocessed = ImageBinarizationFilter.BinarizeImage(Original);
-        }
-
-        public void ProcessImage()
-        {
-            TemplateElementMananger = ImageProcessor.buildPartition(Preprocessed);
-            TemplateElementMananger.TempleateElementsChangedHandler += onTempleateElementsContainerChanged;
-            drawRectangles();
-        }
-
-        private void drawRectangles()
-        {
-            Masked = new Bitmap(original);
-            Graphics rectangles = Graphics.FromImage(Masked);
-            foreach (TemplateElement current in TemplateElementMananger.TemplateElementContainer)
-                rectangles.DrawRectangle(new Pen(Brushes.Red,ImageProcessor.LineWidth), current.Rect);
-        }
-
     }
 }
